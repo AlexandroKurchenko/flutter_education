@@ -17,33 +17,27 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(),
+      home: AuthPage(),
     );
   }
-
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key}) : super(key: key);
+class AuthPage extends StatefulWidget {
+  AuthPage({Key key}) : super(key: key);
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _AuthPageState createState() => _AuthPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _AuthPageState extends State<AuthPage> {
   @override
   Widget build(BuildContext context) {
-    // создаем Bloc и экран для него
     final LoginBlock bloc = LoginBlock();
     final SignIn screen = SignIn();
 
-    // на их основе создаем BlocProvider
     return BlocProvider(
       child: screen,
       bloc: bloc,
     );
   }
 }
-
-
-

@@ -5,14 +5,14 @@ class UserLogin {
   String email;
   String password;
 
-  UserLogin(this.fullName, @required this.email, @required this.password);
+  UserLogin(this.fullName, this.email, this.password);
 
-  UserLogin.forSignUp(@required _email, @required _password) {
+  UserLogin.forSignUp(_email, _password) {
     this.email = _email;
     this.password = _password;
   }
 
-  UserLogin.forSignIn(@required _fullName, @required _email, @required _password) {
+  UserLogin.forSignIn(_fullName, _email, _password) {
     this.fullName = _fullName;
     this.email = _email;
     this.password = _password;

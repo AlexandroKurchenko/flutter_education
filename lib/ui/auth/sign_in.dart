@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/block/login_block.dart';
-import 'package:flutter_app/block/model/User.dart';
+import 'package:flutter_app/block/model/user.dart';
+import 'package:flutter_app/ui/home/home.dart';
+import 'package:flutter_app/widgets/input/text_form_stream.dart';
 import '../../widgets/buttons/ImageButton.dart';
 import '../../widgets/buttons/AuthActionButton.dart';
 import 'sign_up.dart';
@@ -26,19 +28,21 @@ class _SignInState extends State<SignIn> {
     );
   }
 
-  void signInAction() {
-    Future<UserLogin> userData = _loginBlock.signInAction(_fullNameController.text, _passwordController.text,
+  Future<void> signInAction() async {
+    UserLogin userLoginData = await _loginBlock.signInAction(
+        _fullNameController.text,
+        _passwordController.text,
         _emailController.text);
-    if(userData ==null){
+    if (userLoginData == null) {
       return;
     }
-    // userData?.asStream().
+    _moveToHome(userLoginData);
   }
 
-  void _moveToHome() {
+  void _moveToHome(UserLogin userLogin) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => SignUp()),
+      MaterialPageRoute(builder: (context) => Home(userLogin)),
     );
   }
 
@@ -122,32 +126,8 @@ class _SignInState extends State<SignIn> {
                   ),
                 ),
                 SizedBox(height: 10),
-                StreamBuilder(
-                    initialData: true,
-                    stream: _loginBlock.isPasswordValid,
-                    builder: (BuildContext context,
-                        AsyncSnapshot<bool> isFullNameValid) {
-                      if (isFullNameValid.hasData) {
-                        return
-
-                          TextFormField(
-
-                          controller: _fullNameController,
-                          decoration: InputDecoration(
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: _getColorForField(isFullNameValid),
-                                  // color: Colors.blueAccent,
-                                  width: 1.0),
-                            ),
-                            border: OutlineInputBorder(),
-                          ),
-                          // ),
-                        );
-
-                      }
-                      return Container(width: 0.0, height: 0.0);
-                    }),
+                TextFormStream(
+                    _fullNameController, _loginBlock.isFullNameValid),
               ],
             ),
           ),
@@ -167,18 +147,7 @@ class _SignInState extends State<SignIn> {
                   ),
                 ),
                 SizedBox(height: 10),
-                TextFormField(
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    enabledBorder: const OutlineInputBorder(
-                      // width: 0.0 produces a thin "hairline" border
-                      borderSide:
-                          BorderSide(color: Colors.blueAccent, width: 1.0),
-                    ),
-                    border: OutlineInputBorder(),
-                  ),
-                ),
+                TextFormStream(_emailController, _loginBlock.isEmailValid),
               ],
             ),
           ),
@@ -198,17 +167,8 @@ class _SignInState extends State<SignIn> {
                   ),
                 ),
                 SizedBox(height: 10),
-                TextFormField(
-                  controller: _passwordController,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    enabledBorder: const OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.blueAccent, width: 1.0),
-                    ),
-                    border: OutlineInputBorder(),
-                  ),
-                ),
+                TextFormStream(
+                    _passwordController, _loginBlock.isPasswordValid),
               ],
             ),
           ),
@@ -263,8 +223,13 @@ class _SignInState extends State<SignIn> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
     _loginBlock = BlocProvider.of(context);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(body: _getPageContent());
   }
 }

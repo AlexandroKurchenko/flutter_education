@@ -1,16 +1,16 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_app/block/model/User.dart';
+import 'package:flutter_app/block/model/user.dart';
+import 'package:rxdart/rxdart.dart';
 
 import 'base/bloc_base.dart';
 
 class LoginBlock extends BlocBase {
 // final UserLogin user = new UserLogin()
 
-  final StreamController<bool> _password = StreamController<bool>.broadcast(sync: true);
-  final StreamController<bool> _email = StreamController<bool>.broadcast();
-  final StreamController<bool> _fullName = StreamController<bool>.broadcast();
+  final StreamController<bool> _password = BehaviorSubject<bool>();
+  final StreamController<bool> _email = BehaviorSubject<bool>();
+  final StreamController<bool> _fullName = BehaviorSubject<bool>();
   final StreamController<bool> _isLoading = StreamController<bool>.broadcast();
 
   Stream<bool> get isPasswordValid => _password.stream;
@@ -20,8 +20,6 @@ class LoginBlock extends BlocBase {
   Stream<bool> get isFullNameValid => _fullName.stream;
 
   Stream<bool> get isLoading => _isLoading.stream;
-
-  // Sink<String> get inName => _username.sink;
 
   doSignUp() {}
 
@@ -41,8 +39,7 @@ class LoginBlock extends BlocBase {
 
     _fullName.add(_isFullNameValid(fullName));
     _email.add(_isEmailValid(email));
-    bool isValid = _isPasswordValid(password);
-    _password.add(isValid);
+    _password.add(_isPasswordValid(password));
 
     if (!_isFullNameValid(fullName) ||
         !_isEmailValid(email) ||
@@ -58,11 +55,11 @@ class LoginBlock extends BlocBase {
   }
 
   bool _isFullNameValid(String fullName) {
-    return fullName.length > 4;
+    return fullName.length > 2;
   }
 
   bool _isEmailValid(String email) {
-    return email.length > 4;
+    return email.contains("@");
   }
 
   bool _isPasswordValid(String password) {
