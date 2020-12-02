@@ -6,7 +6,6 @@ import 'package:rxdart/rxdart.dart';
 import 'base/bloc_base.dart';
 
 class LoginBlock extends BlocBase {
-// final UserLogin user = new UserLogin()
 
   final StreamController<bool> _password = BehaviorSubject<bool>();
   final StreamController<bool> _email = BehaviorSubject<bool>();
@@ -21,7 +20,24 @@ class LoginBlock extends BlocBase {
 
   Stream<bool> get isLoading => _isLoading.stream;
 
-  doSignUp() {}
+  Future<UserLogin> signUpAction(String password, String email) async {
+    _isLoading.add(true);
+
+    await Future.delayed(Duration(milliseconds: 500)); // a simulated delay
+
+    _email.add(_isEmailValid(email));
+    _password.add(_isPasswordValid(password));
+
+    if (!_isEmailValid(email) || !_isPasswordValid(password)) {
+      _isLoading.add(false);
+      return null;
+    }
+    print("Do login withParams :" + password + "," + email);
+
+    await Future.delayed(Duration(seconds: 5)); // a simulated delay
+    _isLoading.add(false);
+    return UserLogin.forSignUp(email, password);
+  }
 
   @override
   void dispose() {
@@ -49,7 +65,7 @@ class LoginBlock extends BlocBase {
     }
     print("Do login withParams :" + fullName + "," + password + "," + email);
 
-    await Future.delayed(Duration(seconds: 5)); // a simulated delay
+    await Future.delayed(Duration(seconds: 1)); // a simulated delay
     _isLoading.add(false);
     return UserLogin(fullName, email, password);
   }

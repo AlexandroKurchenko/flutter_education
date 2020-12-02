@@ -3,17 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/block/base/bloc_provider.dart';
 import 'package:flutter_app/block/home_block.dart';
 
-class FirstScreen extends StatefulWidget {
+class CoachScreen extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _FirstScreenState();
+  State<StatefulWidget> createState() => _CoachScreenState();
 }
 
-class _FirstScreenState extends State<FirstScreen> {
+class _CoachScreenState extends State<CoachScreen> {
   HomeBlock block;
 
   @override
   void initState() {
-    block = BlocProvider.of(context);
+    block = BlocProvider.of<HomeBlock>(context);
     super.initState();
   }
 
@@ -21,7 +21,7 @@ class _FirstScreenState extends State<FirstScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text("Hello" + block.userLogin.fullName),
+        child: Text("Hello user: " + block.userLogin.password + " on CoachScreen."),
       ),
     );
   }

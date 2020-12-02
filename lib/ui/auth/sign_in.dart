@@ -3,10 +3,11 @@ import 'package:flutter_app/block/login_block.dart';
 import 'package:flutter_app/block/model/user.dart';
 import 'package:flutter_app/ui/home/home.dart';
 import 'package:flutter_app/widgets/input/text_form_stream.dart';
-import '../../widgets/buttons/ImageButton.dart';
-import '../../widgets/buttons/AuthActionButton.dart';
-import 'sign_up.dart';
+
 import '../../block/base/bloc_provider.dart';
+import '../../widgets/buttons/AuthActionButton.dart';
+import '../../widgets/buttons/ImageButton.dart';
+import 'sign_up.dart';
 
 class SignIn extends StatefulWidget {
   SignIn({Key key}) : super(key: key);
@@ -16,7 +17,6 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
-  final _fullNameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _emailController = TextEditingController();
   LoginBlock _loginBlock;
@@ -24,26 +24,35 @@ class _SignInState extends State<SignIn> {
   void _moveToSignUp() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => SignUp()),
+      FadeRouteBuilder(page: BlocProvider(child: SignUp(), bloc: LoginBlock())),
     );
   }
 
-  Future<void> signInAction() async {
-    UserLogin userLoginData = await _loginBlock.signInAction(
-        _fullNameController.text,
-        _passwordController.text,
-        _emailController.text);
-    if (userLoginData == null) {
-      return;
-    }
-    _moveToHome(userLoginData);
-  }
-
   void _moveToHome(UserLogin userLogin) {
+    Navigator.pop(context);
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => Home(userLogin)),
     );
+  }
+
+  void _fillForm() {
+    _passwordController.text = "someCoolPassword";
+    _emailController.text = "email@domain.com";
+  }
+
+  void _clearForm() {
+    _passwordController.text = "";
+    _emailController.text = "";
+  }
+
+  Future<void> signInAction() async {
+    UserLogin userLoginData = await _loginBlock.signUpAction(
+        _passwordController.text, _emailController.text);
+    if (userLoginData == null) {
+      return;
+    }
+    _moveToHome(userLoginData);
   }
 
   Widget _getLoadingWidget() {
@@ -52,21 +61,13 @@ class _SignInState extends State<SignIn> {
     );
   }
 
-  MaterialAccentColor _getColorForField(AsyncSnapshot<bool> isFieldValid) {
-    if (isFieldValid.data != null && isFieldValid.data) {
-      return Colors.blueAccent;
-    } else {
-      return Colors.redAccent;
-    }
-  }
-
   Widget _getSignInForm() {
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
           SizedBox(height: 150),
           Text(
-            'Create Your Account',
+            'Welcome to App!',
             style: TextStyle(
               fontSize: 30.0,
               color: Colors.black,
@@ -84,50 +85,29 @@ class _SignInState extends State<SignIn> {
             ),
           ),
           Container(
-            padding: EdgeInsets.only(top: 15, left: 20, right: 20),
+            padding: EdgeInsets.only(top: 15, left: 25, right: 25),
             child: Row(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Flexible(
-                  child: ImageButton("images/apple_black.png"),
+                  child: ImageButton("images/apple_black.png", _fillForm),
                   flex: 1,
                 ),
                 SizedBox(
                   width: 10,
                 ),
                 Flexible(
-                  child: ImageButton("images/facebook.png"),
+                  child: ImageButton("images/facebook.png", _clearForm),
                   flex: 1,
                 ),
                 SizedBox(
                   width: 10,
                 ),
                 Flexible(
-                  child: ImageButton("images/google.png"),
+                  child: ImageButton("images/google.png", null),
                   flex: 1,
                 ),
-              ],
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.only(top: 20, left: 25, right: 25),
-            child: Column(
-              children: <Widget>[
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Full Name",
-                    style: TextStyle(
-                      fontSize: 15.0,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 10),
-                TextFormStream(
-                    _fullNameController, _loginBlock.isFullNameValid),
               ],
             ),
           ),
@@ -172,27 +152,28 @@ class _SignInState extends State<SignIn> {
               ],
             ),
           ),
-          AuthActionButton("SIGN UP", signInAction),
+          AuthActionButton("SIGN In", signInAction),
           Padding(
-            padding: EdgeInsets.only(
-              left: 23,
-              bottom: 25,
-            ),
+            padding: EdgeInsets.only(left: 25, bottom: 25, right: 25),
             child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  "ALREADY HAVE AN ACCOUNT?",
-                  style: TextStyle(
-                    fontSize: 10.0,
+                GestureDetector(
+                  onTap: () => {}, // needed
+                  child: Text(
+                    "FORGOT PASSWORD?",
+                    style:
+                        TextStyle(fontSize: 10.0, color: "#00AFCD".toColor()),
                   ),
                 ),
                 SizedBox(width: 10),
-                InkWell(
-                  onTap: () => _moveToSignUp, // needed
+                GestureDetector(
+                  onTap: () => _moveToSignUp(), // needed
                   child: Text(
-                    "SIGN IN",
+                    "SIGN UP",
                     style: TextStyle(
-                      color: Colors.blue,
+                      color: "#00AFCD".toColor(),
                       fontSize: 10.0,
                     ),
                   ),
@@ -200,7 +181,10 @@ class _SignInState extends State<SignIn> {
               ],
             ),
           ),
-          Text("Copyright 2020")
+          Padding(
+            padding: EdgeInsets.only(bottom: 20),
+            child: Text("Copyright 2020"),
+          )
         ],
       ),
     );
@@ -224,7 +208,7 @@ class _SignInState extends State<SignIn> {
 
   @override
   void initState() {
-    _loginBlock = BlocProvider.of(context);
+    _loginBlock = BlocProvider.of<LoginBlock>(context);
     super.initState();
   }
 
@@ -232,4 +216,19 @@ class _SignInState extends State<SignIn> {
   Widget build(BuildContext context) {
     return Scaffold(body: _getPageContent());
   }
+}
+
+class FadeRouteBuilder<T> extends PageRouteBuilder<T> {
+  FadeRouteBuilder({@required Widget page})
+      : super(
+          pageBuilder: (context, animation, secondaryAnimation) => page,
+          transitionDuration: Duration(milliseconds: 200),
+          transitionsBuilder: (
+            context,
+            animation,
+            secondaryAnimation,
+            child,
+          ) =>
+              FadeTransition(opacity: animation, child: child),
+        );
 }

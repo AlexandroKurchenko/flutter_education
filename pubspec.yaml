@@ -26,6 +26,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_localized_locales: ">=1.1.1 <=2.0.0"
+  animations: ^1.0.0+5
 
   rxdart: ^0.24.1
   # The following adds the Cupertino Icons font to your application.
