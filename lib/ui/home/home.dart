@@ -17,8 +17,7 @@ class Home extends StatefulWidget {
   Home(this.userLogin, {Key key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() =>
-      _BottomNavigationDemoState(userLogin);
+  State<StatefulWidget> createState() => _BottomNavigationDemoState(userLogin);
 }
 
 enum HomeScreens { Main, Coach, Calendar, Reward }
@@ -65,19 +64,53 @@ class _BottomNavigationDemoState extends State<Home> with RestorationMixin {
     // Adding [UniqueKey] to make sure the widget rebuilds when transitioning.
     switch (HomeScreens.values[viewItem]) {
       case HomeScreens.Main:
-        block = BlocProvider(key: UniqueKey(), child: MainPageScreen(), bloc: homeBloc);
+        block = BlocProvider(
+            key: UniqueKey(), child: MainPageScreen(), bloc: homeBloc);
         break;
       case HomeScreens.Coach:
-        block = BlocProvider(key: UniqueKey(), child: CoachScreen(), bloc: homeBloc);
+        block = BlocProvider(
+            key: UniqueKey(), child: CoachScreen(), bloc: homeBloc);
         break;
       case HomeScreens.Calendar:
-        block = BlocProvider(key: UniqueKey(), child: CalendarScreen(), bloc: homeBloc);
+        block = BlocProvider(
+            key: UniqueKey(), child: CalendarScreen(), bloc: homeBloc);
         break;
       case HomeScreens.Reward:
-        block = BlocProvider(key: UniqueKey(), child: RewardScreen(), bloc: homeBloc);
+        block = BlocProvider(
+            key: UniqueKey(), child: RewardScreen(), bloc: homeBloc);
         break;
     }
     return block;
+  }
+
+  Widget _getContentOfPage() {
+    return Scaffold(
+      body: Column(
+        children: <Widget>[
+            Expanded(
+            child: Center(
+              child: PageTransitionSwitcher(
+                child: _getNavigationView(_currentIndex.value),
+                transitionBuilder: (child, animation, secondaryAnimation) {
+                  return FadeThroughTransition(
+                    child: child,
+                    animation: animation,
+                    secondaryAnimation: secondaryAnimation,
+                  );
+                },
+              ),
+            ),
+          ),
+            SizedBox(
+              width: double.infinity,
+              height: 1,
+              child: const DecoratedBox(
+                decoration: const BoxDecoration(color: Colors.blue),
+              ),
+            )
+        ],
+      ),
+    );
   }
 
   @override
@@ -91,18 +124,7 @@ class _BottomNavigationDemoState extends State<Home> with RestorationMixin {
         automaticallyImplyLeading: false,
         title: Text(bottomNavigationBarItems[_currentIndex.value].label),
       ),
-      body: Center(
-        child: PageTransitionSwitcher(
-          child: _getNavigationView(_currentIndex.value),
-          transitionBuilder: (child, animation, secondaryAnimation) {
-            return FadeThroughTransition(
-              child: child,
-              animation: animation,
-              secondaryAnimation: secondaryAnimation,
-            );
-          },
-        ),
-      ),
+      body: _getContentOfPage(),
       bottomNavigationBar: BottomNavigationBar(
         showUnselectedLabels: true,
         items: bottomNavigationBarItems,
