@@ -2,8 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/block/base/bloc_provider.dart';
 import 'package:flutter_app/block/login_block.dart';
+import 'package:flutter_app/ui/home/home.dart';
 
-import 'auth/sign_in.dart';
+import 'block/model/user.dart';
+import 'ui/auth/sign_in.dart';
 
 void main() {
   runApp(MyApp());
@@ -18,19 +20,12 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: AuthPage(),
+      home: HomePage(), //AuthPage(),
     );
   }
 }
 
-class AuthPage extends StatefulWidget {
-  AuthPage({Key key}) : super(key: key);
-
-  @override
-  _AuthPageState createState() => _AuthPageState();
-}
-
-class _AuthPageState extends State<AuthPage> {
+class AuthPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final LoginBlock bloc = LoginBlock();
@@ -40,5 +35,13 @@ class _AuthPageState extends State<AuthPage> {
       child: screen,
       bloc: bloc,
     );
+  }
+}
+
+///Needed for debug
+class HomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Home(UserLogin("", "", ""));
   }
 }

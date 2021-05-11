@@ -53,8 +53,6 @@ class _MainPageScreenState extends State<MainPageScreen> {
                 return _errorString;
               },
               onFieldSubmitted: (str) {
-                // if (_textKey.currentState.validate())
-                //   widget.callback(_controller.text);
               },
             ),
             onChanged: () {
@@ -63,7 +61,7 @@ class _MainPageScreenState extends State<MainPageScreen> {
           ),
         ),
         RaisedButton(
-          color: Colors.teal,
+          color: Colors.lightGreen[600],
           textColor: Colors.white,
           onPressed: () {
             _textKey.currentState.validate();

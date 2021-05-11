@@ -219,7 +219,7 @@ class _SignInState extends State<SignIn> {
 }
 
 class FadeRouteBuilder<T> extends PageRouteBuilder<T> {
-  FadeRouteBuilder({@required Widget page})
+  FadeRouteBuilder({Widget page})
       : super(
           pageBuilder: (context, animation, secondaryAnimation) => page,
           transitionDuration: Duration(milliseconds: 200),
