@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_app/block/base/bloc_provider.dart';
@@ -33,10 +34,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
         children: <Widget>[
           Text("Hello user: " + block.userLogin.email + " on Calendar Screen."),
           Center(
-            child: ElevatedButton(
-              child: Text("Fetch from native: $_resultData"),
-              onPressed: _getSpecificInfo,
-            ),
+            child: kIsWeb
+                ? Text("Its browser, so could not fetch from native")
+                : ElevatedButton(
+                    child: Text("Fetch from native: $_resultData"),
+                    onPressed: _getSpecificInfo,
+                  ),
           )
         ],
       ),

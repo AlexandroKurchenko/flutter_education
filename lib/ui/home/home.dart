@@ -6,6 +6,7 @@ import 'package:flutter_app/block/home_block.dart';
 import 'package:flutter_app/block/model/user.dart';
 import 'package:flutter_app/ui/home/screens/calendar_screen.dart';
 import 'package:flutter_app/ui/home/screens/coach_screen.dart';
+import 'package:flutter_app/ui/home/screens/custom_widget.dart';
 import 'package:flutter_app/ui/home/screens/listwheelscrollview_widget.dart';
 import 'package:flutter_app/ui/home/screens/reward_screen.dart';
 import 'package:flutter_app/ui/home/screens/sliver_list_app_bar.dart';
@@ -30,11 +31,12 @@ enum HomeScreens {
   Reward,
   Sliver,
   SliverAppBar,
-  ListWheelScrollViewWidget
+  ListWheelScrollViewWidget,
+  CustomWidget
 }
 
 class _BottomNavigationDemoState extends State<Home> with RestorationMixin {
-  final RestorableInt _currentIndex = RestorableInt(4);
+  final RestorableInt _currentIndex = RestorableInt(7);
   final UserLogin userLogin;
 
   _BottomNavigationDemoState(this.userLogin);
@@ -77,42 +79,49 @@ class _BottomNavigationDemoState extends State<Home> with RestorationMixin {
         icon: const Icon(Icons.settings_applications),
         label: "ListWheelScroll",
       ),
+      BottomNavigationBarItem(
+        icon: const Icon(Icons.dashboard_customize),
+        label: "Custom Widget",
+      ),
     ];
   }
 
   Widget _getNavigationView(int viewItem) {
     final HomeBlock homeBloc = HomeBlock(userLogin);
 
-    Widget block;
+    Widget widget;
     // Adding [UniqueKey] to make sure the widget rebuilds when transitioning.
     switch (HomeScreens.values[viewItem]) {
       case HomeScreens.Main:
-        block = BlocProvider(
+        widget = BlocProvider(
             key: UniqueKey(), child: MainPageScreen(), bloc: homeBloc);
         break;
       case HomeScreens.Coach:
-        block = BlocProvider(
+        widget = BlocProvider(
             key: UniqueKey(), child: CoachScreen(), bloc: homeBloc);
         break;
       case HomeScreens.Calendar:
-        block = BlocProvider(
+        widget = BlocProvider(
             key: UniqueKey(), child: CalendarScreen(), bloc: homeBloc);
         break;
       case HomeScreens.Reward:
-        block = BlocProvider(
+        widget = BlocProvider(
             key: UniqueKey(), child: RewardScreen(), bloc: homeBloc);
         break;
       case HomeScreens.Sliver:
-        block = SliverListDrawer();
+        widget = SliverListDrawer();
         break;
       case HomeScreens.ListWheelScrollViewWidget:
-        block = ListWheelScrollViewWidget();
+        widget = ListWheelScrollViewWidget();
         break;
       case HomeScreens.SliverAppBar:
-        block = SliverListAppBar();
+        widget = SliverListAppBar();
+        break;
+      case HomeScreens.CustomWidget:
+        widget = CustomWidget();
         break;
     }
-    return block;
+    return widget;
   }
 
   Widget _getContentOfPage() {
