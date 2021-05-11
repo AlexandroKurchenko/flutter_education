@@ -6,7 +6,10 @@ import 'package:flutter_app/block/home_block.dart';
 import 'package:flutter_app/block/model/user.dart';
 import 'package:flutter_app/ui/home/screens/calendar_screen.dart';
 import 'package:flutter_app/ui/home/screens/coach_screen.dart';
+import 'package:flutter_app/ui/home/screens/listwheelscrollview_widget.dart';
 import 'package:flutter_app/ui/home/screens/reward_screen.dart';
+import 'package:flutter_app/ui/home/screens/sliver_list_app_bar.dart';
+import 'package:flutter_app/ui/home/screens/sliver_list_drawer.dart';
 
 import 'screens/main_page_screen.dart';
 
@@ -20,10 +23,18 @@ class Home extends StatefulWidget {
   State<StatefulWidget> createState() => _BottomNavigationDemoState(userLogin);
 }
 
-enum HomeScreens { Main, Coach, Calendar, Reward }
+enum HomeScreens {
+  Main,
+  Coach,
+  Calendar,
+  Reward,
+  Sliver,
+  SliverAppBar,
+  ListWheelScrollViewWidget
+}
 
 class _BottomNavigationDemoState extends State<Home> with RestorationMixin {
-  final RestorableInt _currentIndex = RestorableInt(0);
+  final RestorableInt _currentIndex = RestorableInt(4);
   final UserLogin userLogin;
 
   _BottomNavigationDemoState(this.userLogin);
@@ -54,6 +65,18 @@ class _BottomNavigationDemoState extends State<Home> with RestorationMixin {
         icon: const Icon(Icons.card_giftcard),
         label: "Reward",
       ),
+      BottomNavigationBarItem(
+        icon: const Icon(Icons.settings),
+        label: "SliverListDrawer",
+      ),
+      BottomNavigationBarItem(
+        icon: const Icon(Icons.scatter_plot_rounded),
+        label: "SliverAppBar",
+      ),
+      BottomNavigationBarItem(
+        icon: const Icon(Icons.settings_applications),
+        label: "ListWheelScroll",
+      ),
     ];
   }
 
@@ -79,6 +102,15 @@ class _BottomNavigationDemoState extends State<Home> with RestorationMixin {
         block = BlocProvider(
             key: UniqueKey(), child: RewardScreen(), bloc: homeBloc);
         break;
+      case HomeScreens.Sliver:
+        block = SliverListDrawer();
+        break;
+      case HomeScreens.ListWheelScrollViewWidget:
+        block = ListWheelScrollViewWidget();
+        break;
+      case HomeScreens.SliverAppBar:
+        block = SliverListAppBar();
+        break;
     }
     return block;
   }
@@ -87,7 +119,7 @@ class _BottomNavigationDemoState extends State<Home> with RestorationMixin {
     return Scaffold(
       body: Column(
         children: <Widget>[
-            Expanded(
+          Expanded(
             child: Center(
               child: PageTransitionSwitcher(
                 child: _getNavigationView(_currentIndex.value),
@@ -101,13 +133,13 @@ class _BottomNavigationDemoState extends State<Home> with RestorationMixin {
               ),
             ),
           ),
-            SizedBox(
-              width: double.infinity,
-              height: 1,
-              child: const DecoratedBox(
-                decoration: const BoxDecoration(color: Colors.blue),
-              ),
-            )
+          SizedBox(
+            width: double.infinity,
+            height: 1,
+            child: const DecoratedBox(
+              decoration: const BoxDecoration(color: Colors.blue),
+            ),
+          )
         ],
       ),
     );
