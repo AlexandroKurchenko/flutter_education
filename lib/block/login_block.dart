@@ -34,7 +34,7 @@ class LoginBlock extends BlocBase {
     }
     print("Do login withParams :" + password + "," + email);
 
-    await Future.delayed(Duration(seconds: 5)); // a simulated delay
+    await Future.delayed(Duration(seconds: 1)); // a simulated delay
     _isLoading.add(false);
     return UserLogin.forSignUp(email, password);
   }
