@@ -3,6 +3,10 @@ import 'dart:math' as Math;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_app/widgets/painters/circle_painter.dart';
+import 'package:flutter_app/widgets/painters/pentagon_background_statistic_painter.dart';
+import 'package:flutter_app/widgets/painters/pentagon_statistic_painter.dart';
+import 'package:flutter_app/widgets/painters/point_painter.dart';
 
 class CustomWidget extends StatefulWidget {
   const CustomWidget({Key key}) : super(key: key);
@@ -13,7 +17,8 @@ class CustomWidget extends StatefulWidget {
 
 const TWO_PI = 3.14 * 2;
 const size = 150.0;
-const _radius = 70.0;
+const customPaintSize = 400.0;
+const _radius = 140.0;
 
 class _CustomWidgetState extends State<CustomWidget>
     with TickerProviderStateMixin {
@@ -199,29 +204,34 @@ class _CustomWidgetState extends State<CustomWidget>
                           ],
                         ),
                       ),
-                Container(
-                  padding: EdgeInsets.only(top: 40),
-                  width: size,
-                  height: size,
-                  child: CustomPaint(
-                    // foregroundPainter: PointPainter(
-                    //     radius: _radius, radians: _customPaintAnimation.value),
-                    painter: PentagonBackgroundStatisticPainter(_radius),
-                    child: Container(),
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.only(top: 50),
-                  width: size,
-                  height: size,
-                  child: CustomPaint(
-                    foregroundPainter: PointPainter(
-                        radius: _radius, radians: _customPaintAnimation.value),
-                    painter: CirclePainter(radius: _radius),
-                    child: Container(),
-                  ),
-                ),
-                SizedBox(width: 0.0, height: 50)
+                FittedBox(
+                    child: SizedBox(
+                        child: Container(
+                          color: Colors.black87,
+                          child: CustomPaint(
+                            foregroundPainter:
+                                PentagonStatisticPainter(_radius),
+                            painter:
+                                PentagonBackgroundStatisticPainter(_radius),
+                            child: Container(),
+                          ),
+                        ),
+                        width: customPaintSize,
+                        height: customPaintSize)),
+                FittedBox(
+                    child: SizedBox(
+                        child: Padding(
+                            child: CustomPaint(
+                              foregroundPainter: PointPainter(
+                                  radius: _radius,
+                                  radians: _customPaintAnimation.value),
+                              painter: CirclePainter(radius: _radius),
+                              child: Container(),
+                            ),
+                            padding: EdgeInsets.only(top: _radius)),
+                        width: customPaintSize,
+                        height: customPaintSize)),
+                SizedBox(width: 0.0, height: _radius / 2)
               ],
             ),
           ),
@@ -249,232 +259,5 @@ class _CustomWidgetState extends State<CustomWidget>
     } else {
       _customPaintController.forward();
     }
-  }
-}
-
-class CirclePainter extends CustomPainter {
-  final double radius;
-
-  CirclePainter({this.radius});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    var paint = Paint();
-    paint.color = Colors.redAccent;
-    paint.strokeWidth = 2;
-    paint.style = PaintingStyle.stroke;
-    paint.strokeCap = StrokeCap.round;
-
-    var path = Path();
-    path.addOval(Rect.fromCircle(
-        center: Offset(size.width / 2, size.height / 2), radius: radius));
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
-  }
-}
-
-class PointPainter extends CustomPainter {
-  final double radius;
-  final double radians;
-
-  PointPainter({this.radius, this.radians});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final Offset center = Offset(size.width / 2, size.height / 2);
-    // print('radians=$radians');
-    // ------------ start drawing of point on circle(CirclePainter)
-    var pointPaint = Paint()
-      ..color = Colors.orange
-      ..strokeWidth = 1
-      ..style = PaintingStyle.fill
-      ..strokeCap = StrokeCap.square;
-
-    final Offset pointOnCircle = Offset(
-      radius * Math.cos(radians) + center.dx,
-      radius * Math.sin(radians) + center.dy,
-    );
-
-    // For showing the point moving on the circle
-    var circleRadius = 10.0;
-    canvas.drawCircle(pointOnCircle, circleRadius, pointPaint);
-    // ------------ end drawing of point on circle(CirclePainter)
-
-    // ------------ start drawing line from center to point(pointOnCircle)
-    var linePaint = Paint()
-      ..color = Colors.black87
-      ..strokeWidth = 1
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-
-    var linePath = Path();
-    linePath.moveTo(
-        center.dx, center.dy); // move start from where start line drawing
-    linePath.lineTo(pointOnCircle.dx, pointOnCircle.dy); //end of drawing
-    linePath.close();
-    canvas.drawPath(linePath, linePaint);
-    // ------------ end drawing line from center to point(pointOnCircle)
-
-    // ------------ start drawing Pentagon
-    var pentagonPaint = Paint()
-      ..color = Colors.indigo
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-    num sides = 5; //for Pentagon
-    var angle = (Math.pi * 2) / sides;
-    var outerRadius = radius + 20;
-    var pentagonPath = Path();
-
-    final Offset pointOnCircleWithPadding = Offset(
-      outerRadius * Math.cos(radians) + center.dx,
-      outerRadius * Math.sin(radians) + center.dy,
-    );
-    pentagonPath.moveTo(
-        pointOnCircleWithPadding.dx, pointOnCircleWithPadding.dy);
-
-    for (int i = 1; i <= sides; i++) {
-      double x = outerRadius * Math.cos(radians + angle * i) + center.dx;
-      double y = outerRadius * Math.sin(radians + angle * i) + center.dy;
-      pentagonPath.lineTo(x, y);
-    }
-    pentagonPath.close();
-    canvas.drawPath(pentagonPath, pentagonPaint);
-    // ------------ end of drawing Pentagon
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
-  }
-}
-
-class PentagonBackgroundStatisticPainter extends CustomPainter {
-  final double radius;
-  List<PentagonOffsets> pentagons = [];
-
-  PentagonBackgroundStatisticPainter(this.radius);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final Offset center = Offset(size.width / 2, size.height / 2);
-
-    final radians = -0.3; // to center starting point
-    final int sides = 5; //for Pentagon
-    if (pentagons.isEmpty) {
-      pentagons.addAll(_getPentagons(radius, sides, center));
-      print("Pentagons = ${pentagons.toString()} ");
-    }
-
-    // ------------ start drawing Pentagon
-    var pentagonPaint = Paint()
-      ..color = Colors.indigo
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-
-    var angle = (Math.pi * 2) / sides;
-    // var pentagonPath = Path();
-
-    // final Offset pointOnCircleWithPadding = Offset(
-    //   radius * Math.cos(radians) + center.dx,
-    //   radius * Math.sin(radians) + center.dy,
-    // );
-    // pentagonPath.moveTo(
-    //     pointOnCircleWithPadding.dx, pointOnCircleWithPadding.dy);
-    var first = pentagons.first;
-    // pentagons.forEach((pentagon) {
-    var pentagonPath = Path();
-    print('pentagons.first = ${first.radius}');
-    for (int i = 0; i < first.pentagons.length; i++) {
-      final offset = first.pentagons[i];
-      if (i == 0) {
-        pentagonPath.moveTo(offset.x, offset.y);
-      }
-      pentagonPath.lineTo(offset.x, offset.y);
-    }
-
-    pentagonPath.close();
-    canvas.drawPath(pentagonPath, pentagonPaint);
-    // });
-    // for (int i = 1; i <= sides; i++) {
-    //   double x = radius * Math.cos(radians + angle * i) + center.dx;
-    //   double y = radius * Math.sin(radians + angle * i) + center.dy;
-    //   pentagonPath.lineTo(x, y);
-    // }
-    // pentagonPath.close();
-    // canvas.drawPath(pentagonPath, pentagonPaint);
-    // ------------ end of drawing Pentagon
-
-    // ------------ start drawing lines to center
-    var linePaint = Paint()
-      ..color = Colors.black87
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-
-    for (int i = 1; i <= sides; i++) {
-      var linePath = Path();
-      linePath.moveTo(center.dx, center.dy);
-      double x = radius * Math.cos(radians + angle * i) + center.dx;
-      double y = radius * Math.sin(radians + angle * i) + center.dy;
-      linePath.lineTo(x, y); //end of drawing
-      linePath.close();
-      canvas.drawPath(linePath, linePaint);
-    }
-    // ------------ end drawing lines to center
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
-  }
-
-  List<PentagonOffsets> _getPentagons(double radius, int sides, Offset center) {
-    final List<PentagonOffsets> offsets = [];
-    final List<PositionHolder> pentagons = <PositionHolder>[];
-    final int length = 5;
-    final radiusStep = radius / length;
-    final radians = -0.3;
-    var angle = (Math.pi * 2) / sides;
-    for (int i = 0; i <= length; i++) {
-      final pentagonRadius = radius - (radiusStep * i);
-      for (int i = 0; i <= sides; i++) {
-        double x = pentagonRadius * Math.cos(radians + angle * i) + center.dx;
-        double y = pentagonRadius * Math.sin(radians + angle * i) + center.dy;
-        pentagons.add(PositionHolder(x, y));
-      }
-      offsets.add(PentagonOffsets(pentagons, pentagonRadius));
-    }
-    return offsets;
-  }
-}
-
-class PentagonOffsets {
-  final List<PositionHolder> pentagons;
-  final double radius;
-
-  PentagonOffsets(this.pentagons, this.radius);
-
-  @override
-  String toString() {
-    return '{pentagons: $pentagons, radius: $radius}';
-  }
-}
-
-class PositionHolder {
-  final double x;
-  final double y;
-
-  PositionHolder(this.x, this.y);
-
-  @override
-  String toString() {
-    return '{x: $x, y: $y}';
   }
 }

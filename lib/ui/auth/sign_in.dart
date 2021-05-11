@@ -5,8 +5,8 @@ import 'package:flutter_app/ui/home/home.dart';
 import 'package:flutter_app/widgets/input/text_form_stream.dart';
 
 import '../../block/base/bloc_provider.dart';
-import '../../widgets/buttons/AuthActionButton.dart';
-import '../../widgets/buttons/ImageButton.dart';
+import '../../widgets/buttons/auth_action_button.dart';
+import '../../widgets/buttons/image_button.dart';
 import 'sign_up.dart';
 
 class SignIn extends StatefulWidget {

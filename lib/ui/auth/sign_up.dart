@@ -3,8 +3,8 @@ import 'package:flutter_app/block/base/bloc_provider.dart';
 import 'package:flutter_app/block/login_block.dart';
 import 'package:flutter_app/block/model/user.dart';
 import 'package:flutter_app/ui/home/home.dart';
-import 'package:flutter_app/widgets/buttons/AuthActionButton.dart';
-import 'package:flutter_app/widgets/buttons/ImageButton.dart';
+import 'package:flutter_app/widgets/buttons/auth_action_button.dart';
+import 'package:flutter_app/widgets/buttons/image_button.dart';
 import 'package:flutter_app/widgets/input/text_form_stream.dart';
 
 class SignUp extends StatefulWidget {
@@ -80,21 +80,21 @@ class _SignUpState extends State<SignUp> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Flexible(
-                  child: ImageButton("images/apple_black.png",null),
+                  child: ImageButton("images/apple_black.png", null),
                   flex: 1,
                 ),
                 SizedBox(
                   width: 10,
                 ),
                 Flexible(
-                  child: ImageButton("images/facebook.png",null),
+                  child: ImageButton("images/facebook.png", null),
                   flex: 1,
                 ),
                 SizedBox(
                   width: 10,
                 ),
                 Flexible(
-                  child: ImageButton("images/google.png",null),
+                  child: ImageButton("images/google.png", null),
                   flex: 1,
                 ),
               ],
